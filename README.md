@@ -1,21 +1,20 @@
 # taffmat
 
-Go package for reading and writing Teac TAFFmat files.
+Go package for reading and writing TEAC TAFFmat files.
 
 [![GoDoc][godoc image]][godoc link]
 [![Go Report Card][report badge]][report card]
 [![Build Status][travis image]][travis link]
-[![Coverage Status][coveralls image]][coveralls link]
 [![License Badge][license image]][LICENSE.txt]
 
 ## About the TAFFmat file format
 
-TAFFmat is Teac's proprietary file format used to store data from their
+TAFFmat is TEAC's proprietary file format used to store data from their
 LX series and other data recorders.
 
-According to the Teac "LX Series Recording Unit Instruction Manual":
+According to the TEAC "LX Series Recording Unit Instruction Manual":
 
->  TAFFmat (an acronym for Teac Data Acquisition File Format) is a
+>  TAFFmat (an acronym for TEAC Data Acquisition File Format) is a
 >  file format composed of the following:
 >
 >  * a data file containing A/D (analog to digital) converted data. The
@@ -23,16 +22,16 @@ According to the Teac "LX Series Recording Unit Instruction Manual":
 >  * a header file containing information such as recording
 >    conditions. The file is in text format with the extension hdr.
 
-TAFFmat is a trademark of Teac Corporation.
+TAFFmat is a trademark of [TEAC Corporation][teac].
 
 ### Data Recorders Using TAFFmat
 
 The following data recorders store their data in the TAFFmat file format:
 
-* Teac [LX-10/20][]
-* Teac [LX-110/120][]
-* Teac [WX-7000 Series][]
-* Teac [es8][]
+* TEAC [LX-10/20][]
+* TEAC [LX-110/120][]
+* TEAC [WX-7000 Series][]
+* TEAC [es8][]
 
 # Installation
 
@@ -72,8 +71,6 @@ $ make cover
 [taffmat][] is released under the MIT license. Please see the
 [LICENSE.txt][] file for more information.
 
-[coveralls image]: http://img.shields.io/coveralls/gotmc/taffmat/master.svg
-[coveralls link]: https://coveralls.io/r/gotmc/taffmat
 [es8]: http://teac-ipd.com/data-recorders/es8/
 [godoc image]: https://godoc.org/github.com/gotmc/libusb?status.svg
 [godoc link]: https://godoc.org/github.com/gotmc/libusb
@@ -85,6 +82,7 @@ $ make cover
 [pull request]: https://help.github.com/articles/using-pull-requests
 [report badge]: https://goreportcard.com/badge/github.com/gotmc/taffmat
 [report card]: https://goreportcard.com/report/github.com/gotmc/taffmat
+[teac]: https://www.teac.co.jp/int/
 [travis image]: http://img.shields.io/travis/gotmc/taffmat/master.svg
 [travis link]: https://travis-ci.org/gotmc/taffmat
 [WX-7000 Series]: http://teac-ipd.com/wx-7000/
