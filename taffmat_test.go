@@ -96,4 +96,19 @@ func TestParseHeader(t *testing.T) {
 	if hdr.StorageMode != "INTERLACED" {
 		t.Errorf("StorageMode = %s, expected INTERLACED", hdr.StorageMode)
 	}
+	if hdr.XOffset != 0.0 {
+		t.Errorf("XOffset = %f, expected 0.0", hdr.XOffset)
+	}
+	expectedMemo := "Sample recordings for unit_testing taffmat.py"
+	if hdr.Memo != expectedMemo {
+		t.Errorf("Memo = %s, expected %s", hdr.Memo, expectedMemo)
+	}
+	expectedDevice := LX10
+	if hdr.Device != expectedDevice {
+		t.Errorf("Device = %s, expected %s", hdr.Device, expectedDevice)
+	}
+	expectedFileType := IntegerFile
+	if hdr.FileType != expectedFileType {
+		t.Errorf("FileType = %s, expected %s", hdr.FileType, expectedFileType)
+	}
 }

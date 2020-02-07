@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+// Amp models a Teac amplifier that can be in one of the two slots in the Teac
+// LX recorder.
+type Amp struct {
+}
+
 // Header models the TAFFmat file header.
 type Header struct {
 	Dataset     string
@@ -23,6 +28,10 @@ type Header struct {
 	NumSeries   int
 	NumSamples  int
 	StorageMode string
+	XOffset     float64
+	Memo        string
+	Device      DeviceType
+	FileType    FileType
 }
 
 // ReadHeader reads the TAFFmat header file.
@@ -62,6 +71,7 @@ func parseHeader(data []byte) (*Header, error) {
 	hdr.Version = ver
 
 	// Determine StorageMode
+	// TODO(mdr): Change StorageMode from string to enum.
 	hdr.StorageMode = hdrMap["storage_mode"]
 	if hdr.StorageMode != "INTERLACED" {
 		return nil, fmt.Errorf("unkown storage mode: %s", hdr.StorageMode)
@@ -87,6 +97,23 @@ func parseHeader(data []byte) (*Header, error) {
 		return nil, err
 	}
 	hdr.NumSamples = numSamples
+
+	// Determine XOffset
+	xOffset, err := strconv.ParseFloat(hdrMap["x_offset"], 32)
+	if err != nil {
+		return nil, err
+	}
+	hdr.XOffset = xOffset
+
+	// Determine Device
+	dt, ok := deviceMap[hdrMap["device"]]
+	if !ok {
+		return nil, fmt.Errorf("Invalid device type: %s", hdrMap["device"])
+	}
+	hdr.Device = dt
+
+	// Determine Memo
+	hdr.Memo = hdrMap["memo"]
 
 	return &hdr, nil
 }
