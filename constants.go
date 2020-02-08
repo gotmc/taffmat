@@ -79,3 +79,61 @@ func (ft FileType) NumBytes() int {
 	}
 	return 0
 }
+
+// TriggerType are the available trigger types to start a recording.
+type TriggerType int
+
+// Available start recording trigger types.
+const (
+	CommandTrigger TriggerType = iota
+	PanelTrigger
+	LevelTrigger
+	DateTrigger
+	TimerTrigger
+	ExternalTrigger
+	TimeOutTrigger
+)
+
+var triggerMap = map[string]TriggerType{
+	"COMMAND":  CommandTrigger,
+	"PANEL":    PanelTrigger,
+	"DATE":     DateTrigger,
+	"TIMER":    TimerTrigger,
+	"EXT":      ExternalTrigger,
+	"TIME_OUT": TimeOutTrigger,
+}
+
+var triggerDesc = map[TriggerType]string{
+	CommandTrigger:  "Interface command",
+	PanelTrigger:    "FWD button of the front panel",
+	DateTrigger:     "When Repeat Count is 1 in the interval action",
+	TimerTrigger:    "When Repeat Count is 2 or more in the interval action",
+	ExternalTrigger: "External Trigger",
+	TimeOutTrigger:  "Time out",
+}
+
+// String implements the Stringer interface for the TriggerType.
+func (tt TriggerType) String() string {
+	return triggerDesc[tt]
+}
+
+// StorageType are the available storage types for the TAFFmat file.
+type StorageType int
+
+// Available TAFFmat file storage types.
+const (
+	Interlaced StorageType = iota
+)
+
+var storageMap = map[string]StorageType{
+	"INTERLACED": Interlaced,
+}
+
+var storageDesc = map[StorageType]string{
+	Interlaced: "Interlaced scan order",
+}
+
+// String implements the Stringer interface for the StorageType.
+func (st StorageType) String() string {
+	return storageDesc[st]
+}

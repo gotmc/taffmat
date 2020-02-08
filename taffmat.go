@@ -17,21 +17,32 @@ import (
 // Amp models a Teac amplifier that can be in one of the two slots in the Teac
 // LX recorder.
 type Amp struct {
+	Slot            int
+	Name            string
+	NumChannels     int
+	VersionPLD      string
+	VersionFirmware string
+}
+
+// Channel models a channel that recorded data.
+type Channel struct {
 }
 
 // Header models the TAFFmat file header.
 type Header struct {
 	Dataset     string
-	Version     int
-	Timestamp   time.Time
+	FileVersion int
+	StartTime   time.Time
+	StopTime    time.Time
 	Rate        int
 	NumSeries   int
 	NumSamples  int
-	StorageMode string
+	StorageMode StorageType
 	XOffset     float64
 	Memo        string
 	Device      DeviceType
 	FileType    FileType
+	Channels    []Channel
 }
 
 // ReadHeader reads the TAFFmat header file.
@@ -60,7 +71,7 @@ func parseHeader(data []byte) (*Header, error) {
 
 	hdr.Dataset = hdrMap["dataset"]
 
-	// Determine Version
+	// Determine FileVersion
 	ver, err := strconv.Atoi(hdrMap["version"])
 	if err != nil {
 		return nil, err
@@ -68,14 +79,14 @@ func parseHeader(data []byte) (*Header, error) {
 	if ver != 1 {
 		return nil, fmt.Errorf("unknown version: %d", ver)
 	}
-	hdr.Version = ver
+	hdr.FileVersion = ver
 
 	// Determine StorageMode
-	// TODO(mdr): Change StorageMode from string to enum.
-	hdr.StorageMode = hdrMap["storage_mode"]
-	if hdr.StorageMode != "INTERLACED" {
+	storageMode := hdrMap["storage_mode"]
+	if storageMode != "INTERLACED" {
 		return nil, fmt.Errorf("unkown storage mode: %s", hdr.StorageMode)
 	}
+	hdr.StorageMode = Interlaced
 
 	// Determine Rate
 	rate, err := strconv.Atoi(hdrMap["rate"])
