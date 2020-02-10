@@ -6,14 +6,14 @@
 package taffmat
 
 // DeviceType are the available Teac device types.
-type DeviceType int
+type DeviceType string
 
 // Available device types.
 const (
-	LX10 DeviceType = iota
-	LX20
-	LX110
-	LX120
+	LX10  DeviceType = "LX-10"
+	LX20             = "LX-20"
+	LX110            = "LX-110"
+	LX120            = "LX-120"
 )
 
 var deviceMap = map[string]DeviceType{
@@ -23,25 +23,18 @@ var deviceMap = map[string]DeviceType{
 	"LX-120": LX120,
 }
 
-var deviceDesc = map[DeviceType]string{
-	LX10:  "LX-10",
-	LX20:  "LX-20",
-	LX110: "LX-110",
-	LX120: "LX-120",
-}
-
 // String implements the Stringer interface for the DeviceType.
 func (dt DeviceType) String() string {
-	return deviceDesc[dt]
+	return string(dt)
 }
 
 // FileType are the available Teac file types.
-type FileType int
+type FileType string
 
-// Available device types.
+// Available file types.
 const (
-	IntegerFile FileType = iota
-	LongFile
+	IntegerFile FileType = "INTEGER" // 16-bit ADC, 2-byte integers
+	LongFile             = "LONG"    // 24-bit ADC, 4-byte integers
 )
 
 var fileMap = map[string]FileType{
@@ -49,14 +42,9 @@ var fileMap = map[string]FileType{
 	"LONG":    LongFile,
 }
 
-var fileDesc = map[FileType]string{
-	IntegerFile: "Integer (16-bit A/D, 2-byte integers)",
-	LongFile:    "Long (24-bit A/D, 4-byte integers)",
-}
-
 // String implements the Stringer interface for the DeviceType.
 func (ft FileType) String() string {
-	return fileDesc[ft]
+	return string(ft)
 }
 
 // BitResolution returns the bit resolution of the Analog-to-Digital Converter
@@ -118,22 +106,54 @@ func (tt TriggerType) String() string {
 }
 
 // StorageType are the available storage types for the TAFFmat file.
-type StorageType int
+type StorageType string
 
 // Available TAFFmat file storage types.
 const (
-	Interlaced StorageType = iota
+	Interlaced StorageType = "INTERLACED"
 )
 
 var storageMap = map[string]StorageType{
 	"INTERLACED": Interlaced,
 }
 
-var storageDesc = map[StorageType]string{
-	Interlaced: "Interlaced scan order",
-}
-
 // String implements the Stringer interface for the StorageType.
 func (st StorageType) String() string {
-	return storageDesc[st]
+	return string(st)
+}
+
+// AmpType are the available TEAC amplifier types.
+type AmpType string
+
+// Available TEAC amplifier types.
+const (
+	DC100K AmpType = "DC100K"
+)
+
+var ampMap = map[string]AmpType{
+	"DC100K": DC100K,
+}
+
+// String implements the Stringer interface for the AmpType.
+func (at AmpType) String() string {
+	return string(at)
+}
+
+// RangeType are the available TEAC amplifier types.
+type RangeType string
+
+// Available TEAC recording ranges.
+const (
+	Range2V RangeType = "2V"
+	Range5V           = "5V"
+)
+
+var rangeMap = map[string]RangeType{
+	"2V": Range2V,
+	"5V": Range5V,
+}
+
+// String implements the Stringer interface for the RangeType.
+func (rt RangeType) String() string {
+	return string(rt)
 }

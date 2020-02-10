@@ -5,7 +5,11 @@
 
 package taffmat
 
-import "testing"
+import (
+	"math"
+	"testing"
+	"time"
+)
 
 const lx10Header1 = `DATASET UTEST001
 VERSION 1
@@ -84,7 +88,8 @@ LX10_VERSION PAL1_VER,PAL2_VER,V0.03,02200000
 
 const lx110Header1 = `DATASET TEST0001
 VERSION 1
-SERIES CH1_LX10_DC100K,CH2_LX10_DC100K,CH3_LX10_DC100K,CH4_LX10_DC100K,CH5_LX110_DC100K,CH6_LX10_DC100K,CH7_LX10_DC100K,CH8_LX10_DC100K DATE 06-23-2001
+SERIES CH1_LX110_DC100K,CH2_LX110_DC100K,CH3_LX110_DC100K,CH4_LX110_DC100K,CH5_LX110_DC100K,CH6_LX110_DC100K,CH7_LX110_DC100K,CH8_LX110_DC100K
+DATE 06-23-2001
 TIME 16:32:55.00
 RATE 1500
 VERT_UNITS V,V,V,V,V,V,V,V
@@ -124,85 +129,140 @@ MEMO <LX-110>`
 
 func TestParseHeader(t *testing.T) {
 	testCases := []struct {
-		hdr         string
-		dataset     string
-		fileVersion int
-		numSeries   int
-		numSamples  int
-		storageMode StorageType
-		xOffset     float64
-		memo        string
-		device      DeviceType
-		fileType    FileType
+		given string
+		hdr   Header
 	}{
 		{
-			hdr:         lx10Header1,
-			dataset:     "UTEST001",
-			fileVersion: 1,
-			numSeries:   2,
-			numSamples:  1249792,
-			storageMode: Interlaced,
-			xOffset:     0.0,
-			memo:        "Sample recordings for unit_testing taffmat.py",
-			device:      LX10,
-			fileType:    IntegerFile,
+			given: lx10Header1,
+			hdr: Header{
+				Dataset:     "UTEST001",
+				FileVersion: 1,
+				StartTime:   time.Date(2013, 2, 9, 13, 35, 37, 0, time.UTC),
+				StopTime:    time.Date(2013, 2, 9, 13, 35, 50, 0, time.UTC),
+				NumSeries:   2,
+				NumSamples:  1249792,
+				StorageMode: Interlaced,
+				XOffset:     0.0,
+				Memo:        "Sample recordings for unit_testing taffmat.py",
+				Device:      LX10,
+				FileType:    IntegerFile,
+				Channels: []Channel{
+					{
+						Number: 1,
+						Slope:  0.00008,
+					},
+					{
+						Number: 2,
+						Slope:  0.0002,
+					},
+				},
+			},
 		},
 		{
-			hdr:         lx10Header2,
-			dataset:     "TEST0001",
-			fileVersion: 1,
-			numSeries:   8,
-			numSamples:  59200,
-			storageMode: Interlaced,
-			xOffset:     -5,
-			memo:        "",
-			device:      LX10,
-			fileType:    IntegerFile,
+			given: lx10Header2,
+			hdr: Header{
+				Dataset:     "TEST0001",
+				FileVersion: 1,
+				StartTime:   time.Date(2001, 6, 23, 16, 32, 55, 0, time.UTC),
+				StopTime:    time.Date(2001, 6, 23, 16, 33, 35, 0, time.UTC),
+				NumSeries:   8,
+				NumSamples:  59200,
+				StorageMode: Interlaced,
+				XOffset:     -5,
+				Memo:        "",
+				Device:      LX10,
+				FileType:    IntegerFile,
+				Channels: []Channel{
+					{
+						Number: 1,
+						Slope:  0.00008,
+					},
+					{
+						Number: 2,
+						Slope:  0.00008,
+					},
+				},
+			},
 		},
 		{
-			hdr:         lx110Header1,
-			dataset:     "TEST0001",
-			fileVersion: 1,
-			numSeries:   8,
-			numSamples:  59200,
-			storageMode: Interlaced,
-			xOffset:     -5.0,
-			memo:        "<LX-110>",
-			device:      LX110,
-			fileType:    IntegerFile,
+			given: lx110Header1,
+			hdr: Header{
+				Dataset:     "TEST0001",
+				FileVersion: 1,
+				StartTime:   time.Date(2001, 6, 23, 16, 32, 55, 0, time.UTC),
+				StopTime:    time.Date(2001, 6, 23, 16, 33, 35, 0, time.UTC),
+				NumSeries:   8,
+				NumSamples:  59200,
+				StorageMode: Interlaced,
+				XOffset:     -5.0,
+				Memo:        "<LX-110>",
+				Device:      LX110,
+				FileType:    IntegerFile,
+				Channels: []Channel{
+					{
+						Number: 1,
+						Slope:  0.00008,
+					},
+					{
+						Number: 2,
+						Slope:  0.00008,
+					},
+				},
+			},
 		},
 	}
 	for _, tc := range testCases {
-		hdr, err := parseHeader([]byte(tc.hdr))
+		hdr, err := parseHeader([]byte(tc.given))
 		if err != nil {
 			t.Errorf("error parsing file: %s", err)
 		}
-		if hdr.Dataset != tc.dataset {
-			t.Errorf("Dataset = %s, expected %s", hdr.Dataset, tc.dataset)
+		if hdr.Dataset != tc.hdr.Dataset {
+			t.Errorf("Dataset = %s, expected %s", hdr.Dataset, tc.hdr.Dataset)
 		}
-		if hdr.FileVersion != tc.fileVersion {
-			t.Errorf("FileVersion = %d, expected %d", hdr.FileVersion, tc.fileVersion)
+		if hdr.FileVersion != tc.hdr.FileVersion {
+			t.Errorf("FileVersion = %d, expected %d", hdr.FileVersion, tc.hdr.FileVersion)
 		}
-		if hdr.NumSeries != tc.numSeries {
-			t.Errorf("NumSeries = %d, expected %d", hdr.NumSeries, tc.numSeries)
+		if hdr.NumSeries != tc.hdr.NumSeries {
+			t.Errorf("NumSeries = %d, expected %d", hdr.NumSeries, tc.hdr.NumSeries)
 		}
-		if hdr.NumSamples != tc.numSamples {
-			t.Errorf("NumSamples = %d, expected %d", hdr.NumSamples, tc.numSamples)
+		if hdr.NumSamples != tc.hdr.NumSamples {
+			t.Errorf("NumSamples = %d, expected %d", hdr.NumSamples, tc.hdr.NumSamples)
 		}
-		if hdr.StorageMode != tc.storageMode {
-			t.Errorf("StorageMode = %s, expected %s", hdr.StorageMode, tc.storageMode)
+		if hdr.StorageMode != tc.hdr.StorageMode {
+			t.Errorf("StorageMode = %s, expected %s", hdr.StorageMode, tc.hdr.StorageMode)
 		}
-		if hdr.XOffset != tc.xOffset {
-			t.Errorf("XOffset = %f, expected %f", hdr.XOffset, tc.xOffset)
+		if hdr.XOffset != tc.hdr.XOffset {
+			t.Errorf("XOffset = %f, expected %f", hdr.XOffset, tc.hdr.XOffset)
 		}
-		if hdr.Memo != tc.memo {
-			t.Errorf("Memo = %s, expected %s", hdr.Memo, tc.memo)
+		if hdr.Memo != tc.hdr.Memo {
+			t.Errorf("Memo = %s, expected %s", hdr.Memo, tc.hdr.Memo)
 		}
-		if hdr.Device != tc.device {
-			t.Errorf("Device = %s, expected %s", hdr.Device, tc.device)
+		if hdr.Device != tc.hdr.Device {
+			t.Errorf("Device = %s, expected %s", hdr.Device, tc.hdr.Device)
 		}
-		if hdr.FileType != tc.fileType {
-			t.Errorf("FileType = %s, expected %s", hdr.FileType, tc.fileType)
+		if hdr.FileType != tc.hdr.FileType {
+			t.Errorf("FileType = %s, expected %s", hdr.FileType, tc.hdr.FileType)
+		}
+		if hdr.StartTime != tc.hdr.StartTime {
+			t.Errorf("StartTime = %s, expected %s", hdr.StartTime, tc.hdr.StartTime)
+		}
+		if hdr.StopTime != tc.hdr.StopTime {
+			t.Errorf("StopTime = %s, expected %s", hdr.StopTime, tc.hdr.StopTime)
+		}
+		if len(hdr.Channels) != hdr.NumSeries {
+			t.Errorf("Channel length (%d) doesn't match number of series (%d)", len(hdr.Channels), hdr.NumSeries)
+		}
+		if !almostEqual(hdr.Channels[0].Slope, tc.hdr.Channels[0].Slope) {
+			t.Errorf("slope = %f, expected %f", hdr.Channels[0].Slope, tc.hdr.Channels[0].Slope)
+		}
+		if !almostEqual(hdr.Channels[1].Slope, tc.hdr.Channels[1].Slope) {
+			t.Errorf("slope = %f, expected %f", hdr.Channels[1].Slope, tc.hdr.Channels[1].Slope)
 		}
 	}
+}
+
+const tolerance = 0.0000000001
+
+func almostEqual(f1, f2 float64) bool {
+	return math.Abs(f1-f2) < tolerance
 }
