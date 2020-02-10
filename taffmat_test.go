@@ -25,7 +25,7 @@ STORAGE_MODE INTERLACED
 FILE_TYPE INTEGER
 SLOPE 8.000000e-005,2.000000e-004
 X_OFFSET 0.0
-Y_OFFSET 0.000000e+000,0.000000e+000
+Y_OFFSET 0.100000e+000,0.000000e+000
 NUM_SAMPS 1249792
 DATA
 DEVICE LX-10
@@ -148,12 +148,14 @@ func TestParseHeader(t *testing.T) {
 				FileType:    IntegerFile,
 				Channels: []Channel{
 					{
-						Number: 1,
-						Slope:  0.00008,
+						Number:  1,
+						Slope:   0.00008,
+						YOffset: 0.1,
 					},
 					{
-						Number: 2,
-						Slope:  0.0002,
+						Number:  2,
+						Slope:   0.0002,
+						YOffset: 0.0,
 					},
 				},
 			},
@@ -257,6 +259,12 @@ func TestParseHeader(t *testing.T) {
 		}
 		if !almostEqual(hdr.Channels[1].Slope, tc.hdr.Channels[1].Slope) {
 			t.Errorf("slope = %f, expected %f", hdr.Channels[1].Slope, tc.hdr.Channels[1].Slope)
+		}
+		if !almostEqual(hdr.Channels[0].YOffset, tc.hdr.Channels[0].YOffset) {
+			t.Errorf("ch 1 y-offset = %f, expected %f", hdr.Channels[0].YOffset, tc.hdr.Channels[0].YOffset)
+		}
+		if !almostEqual(hdr.Channels[1].YOffset, tc.hdr.Channels[1].YOffset) {
+			t.Errorf("ch 2 y-offset = %f, expected %f", hdr.Channels[1].YOffset, tc.hdr.Channels[1].YOffset)
 		}
 	}
 }
