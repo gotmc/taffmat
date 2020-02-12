@@ -8,6 +8,7 @@ package taffmat
 import (
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -38,6 +39,7 @@ type Channel struct {
 // Header models the TAFFmat file header.
 type Header struct {
 	Dataset     string
+	Filename    string
 	FileVersion int
 	StartTime   time.Time
 	StopTime    time.Time
@@ -52,16 +54,23 @@ type Header struct {
 	Channels    []Channel
 }
 
-// ReadHeader reads the TAFFmat header file.
+// ReadHeader reads the TAFFmat header file. The filename can, but is not
+// required to, include the `.hdr` extension.
 func ReadHeader(filename string) (*Header, error) {
-	data, err := ioutil.ReadFile(filename)
+	ext := filepath.Ext(filename)
+	if strings.ToUpper(ext) == ".HDR" {
+		filename = strings.TrimSuffix(filename, ext)
+	} else if ext != "" {
+		return nil, fmt.Errorf("filename extension must be blank or HDR instead of %s", ext)
+	}
+	data, err := ioutil.ReadFile(filename + ".HDR")
 	if err != nil {
 		return nil, err
 	}
-	return parseHeader(data)
+	return parseHeader(data, filename)
 }
 
-func parseHeader(data []byte) (*Header, error) {
+func parseHeader(data []byte, filename string) (*Header, error) {
 	var hdr Header
 	hdrMap := make(map[string]string)
 	for _, line := range strings.Split(string(data), "\n") {
@@ -75,6 +84,7 @@ func parseHeader(data []byte) (*Header, error) {
 		}
 	}
 
+	hdr.Filename = filename
 	hdr.Dataset = hdrMap["dataset"]
 
 	// Determine FileVersion
