@@ -161,21 +161,17 @@ func parseHeader(data []byte, filename string) (*Header, error) {
 	hdr.Device = dt
 
 	// Configure channels
-	offsetStrings := strings.Split(hdrMap["y_offset"], ",")
-	if len(offsetStrings) != hdr.NumSeries {
-		return nil, fmt.Errorf("found %d y-offsets and %d series", len(offsetStrings), hdr.NumSeries)
-	}
-	offsets, err := parseStringFloat(offsetStrings)
+	offsets, err := parseStringFloats(hdrMap["y_offset"])
 	if err != nil {
 		return nil, err
+	} else if len(offsets) != hdr.NumSeries {
+		return nil, fmt.Errorf("found %d y-offsets and %d series", len(offsets), hdr.NumSeries)
 	}
-	slopeStrings := strings.Split(hdrMap["slope"], ",")
-	if len(slopeStrings) != hdr.NumSeries {
-		return nil, fmt.Errorf("found %d slopes and %d series", len(slopeStrings), hdr.NumSeries)
-	}
-	slopes, err := parseStringFloat(slopeStrings)
+	slopes, err := parseStringFloats(hdrMap["slope"])
 	if err != nil {
 		return nil, err
+	} else if len(slopes) != hdr.NumSeries {
+		return nil, fmt.Errorf("found %d slopes and %d series", len(slopes), hdr.NumSeries)
 	}
 	for i := 1; i <= hdr.NumSeries; i++ {
 		chKey := fmt.Sprintf("ch%d_%d", i, i)
@@ -206,7 +202,8 @@ func parseHeader(data []byte, filename string) (*Header, error) {
 	return &hdr, nil
 }
 
-func parseStringFloat(slice []string) ([]float64, error) {
+func parseStringFloats(s string) ([]float64, error) {
+	slice := strings.Split(s, ",")
 	nums := make([]float64, len(slice))
 	for i, s := range slice {
 		num, err := strconv.ParseFloat(strings.TrimSpace(s), 64)

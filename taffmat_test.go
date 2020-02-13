@@ -275,28 +275,28 @@ func almostEqual(f1, f2 float64) bool {
 	return math.Abs(f1-f2) < tolerance
 }
 
-func TestParseStringFloat(t *testing.T) {
+func TestParseStringFloats(t *testing.T) {
 	testCases := []struct {
-		given    []string
+		given    string
 		expected []float64
 	}{
 		{
-			given:    []string{"0.001", "0.002", "0.003"},
+			given:    "0.001,0.002,0.003",
 			expected: []float64{0.001, 0.002, 0.003},
 		},
 		{
-			given:    []string{"0.001", "0.002", "0.003"},
-			expected: []float64{0.001, 0.002, 0.003},
+			given:    "1.00,2.00,3.00",
+			expected: []float64{1.00, 2.00, 3.00},
 		},
 	}
 	for _, tc := range testCases {
-		calcs, err := parseStringFloat(tc.given)
+		calcs, err := parseStringFloats(tc.given)
 		if err != nil {
 			t.Errorf("error parsing slice of strings into floats: %s", err)
 		}
 		for i, calc := range calcs {
 			if calc != tc.expected[i] {
-				t.Errorf("given %s, expected = %f, calculated = %f", tc.given[i], tc.expected[i], calc)
+				t.Errorf("given %s / index %d expected = %f / calculated = %f", tc.given, i, tc.expected[i], calc)
 			}
 		}
 	}
