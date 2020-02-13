@@ -214,7 +214,7 @@ func TestParseHeader(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
-		hdr, err := parseHeader([]byte(tc.given))
+		hdr, err := parseHeader([]byte(tc.given), "foo")
 		if err != nil {
 			t.Errorf("error parsing file: %s", err)
 		}
@@ -273,4 +273,31 @@ const tolerance = 0.0000000001
 
 func almostEqual(f1, f2 float64) bool {
 	return math.Abs(f1-f2) < tolerance
+}
+
+func TestParseStringFloat(t *testing.T) {
+	testCases := []struct {
+		given    []string
+		expected []float64
+	}{
+		{
+			given:    []string{"0.001", "0.002", "0.003"},
+			expected: []float64{0.001, 0.002, 0.003},
+		},
+		{
+			given:    []string{"0.001", "0.002", "0.003"},
+			expected: []float64{0.001, 0.002, 0.003},
+		},
+	}
+	for _, tc := range testCases {
+		calcs, err := parseStringFloat(tc.given)
+		if err != nil {
+			t.Errorf("error parsing slice of strings into floats: %s", err)
+		}
+		for i, calc := range calcs {
+			if calc != tc.expected[i] {
+				t.Errorf("given %s, expected = %f, calculated = %f", tc.given[i], tc.expected[i], calc)
+			}
+		}
+	}
 }
