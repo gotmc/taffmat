@@ -1,4 +1,4 @@
-// Copyright (c) 2020 The taffmat developers. All rights reserved.
+// Copyright (c) 2020–2023 The taffmat developers. All rights reserved.
 // Project site: https://github.com/gotmc/taffmat
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gotmc/parse"
 )
 
 // Amp models a Teac amplifier that can be in one of the two slots in the Teac
@@ -156,18 +158,18 @@ func parseHeader(data []byte, filename string) (*Header, error) {
 	// Determine Device
 	dt, ok := deviceMap[hdrMap["device"]]
 	if !ok {
-		return nil, fmt.Errorf("Invalid device type: %s", hdrMap["device"])
+		return nil, fmt.Errorf("invalid device type: %s", hdrMap["device"])
 	}
 	hdr.Device = dt
 
 	// Configure channels
-	offsets, err := parseStringFloats(hdrMap["y_offset"])
+	offsets, err := parse.StringToFloats(hdrMap["y_offset"], ",")
 	if err != nil {
 		return nil, err
 	} else if len(offsets) != hdr.NumSeries {
 		return nil, fmt.Errorf("found %d y-offsets and %d series", len(offsets), hdr.NumSeries)
 	}
-	slopes, err := parseStringFloats(hdrMap["slope"])
+	slopes, err := parse.StringToFloats(hdrMap["slope"], ",")
 	if err != nil {
 		return nil, err
 	} else if len(slopes) != hdr.NumSeries {
@@ -200,17 +202,4 @@ func parseHeader(data []byte, filename string) (*Header, error) {
 	hdr.Memo = hdrMap["memo"]
 
 	return &hdr, nil
-}
-
-func parseStringFloats(s string) ([]float64, error) {
-	slice := strings.Split(s, ",")
-	nums := make([]float64, len(slice))
-	for i, s := range slice {
-		num, err := strconv.ParseFloat(strings.TrimSpace(s), 64)
-		if err != nil {
-			return nil, fmt.Errorf("error converting %s to float64", s)
-		}
-		nums[i] = num
-	}
-	return nums, nil
 }

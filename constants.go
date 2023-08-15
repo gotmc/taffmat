@@ -1,4 +1,4 @@
-// Copyright (c) 2020 The taffmat developers. All rights reserved.
+// Copyright (c) 2020–2023 The taffmat developers. All rights reserved.
 // Project site: https://github.com/gotmc/taffmat
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -11,9 +11,9 @@ type DeviceType string
 // Available device types.
 const (
 	LX10  DeviceType = "LX-10"
-	LX20             = "LX-20"
-	LX110            = "LX-110"
-	LX120            = "LX-120"
+	LX20  DeviceType = "LX-20"
+	LX110 DeviceType = "LX-110"
+	LX120 DeviceType = "LX-120"
 )
 
 var deviceMap = map[string]DeviceType{
@@ -34,7 +34,7 @@ type FileType string
 // Available file types.
 const (
 	IntegerFile FileType = "INTEGER" // 16-bit ADC, 2-byte integers
-	LongFile             = "LONG"    // 24-bit ADC, 4-byte integers
+	LongFile    FileType = "LONG"    // 24-bit ADC, 4-byte integers
 )
 
 var fileMap = map[string]FileType{
@@ -145,7 +145,7 @@ type RangeType string
 // Available TEAC recording ranges.
 const (
 	Range2V RangeType = "2V"
-	Range5V           = "5V"
+	Range5V RangeType = "5V"
 )
 
 var rangeMap = map[string]RangeType{
