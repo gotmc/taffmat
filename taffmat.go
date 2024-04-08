@@ -1,4 +1,4 @@
-// Copyright (c) 2020–2023 The taffmat developers. All rights reserved.
+// Copyright (c) 2020–2024 The taffmat developers. All rights reserved.
 // Project site: https://github.com/gotmc/taffmat
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -7,13 +7,13 @@ package taffmat
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gotmc/parse"
+	"github.com/gotmc/convert"
 )
 
 // Amp models a Teac amplifier that can be in one of the two slots in the Teac
@@ -65,7 +65,7 @@ func ReadHeader(filename string) (*Header, error) {
 	} else if ext != "" {
 		return nil, fmt.Errorf("filename extension must be blank or HDR instead of %s", ext)
 	}
-	data, err := ioutil.ReadFile(filename + ".HDR")
+	data, err := os.ReadFile(filename + ".HDR")
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +163,13 @@ func parseHeader(data []byte, filename string) (*Header, error) {
 	hdr.Device = dt
 
 	// Configure channels
-	offsets, err := parse.StringToFloats(hdrMap["y_offset"], ",")
+	offsets, err := convert.StringToFloats(hdrMap["y_offset"], ",")
 	if err != nil {
 		return nil, err
 	} else if len(offsets) != hdr.NumSeries {
 		return nil, fmt.Errorf("found %d y-offsets and %d series", len(offsets), hdr.NumSeries)
 	}
-	slopes, err := parse.StringToFloats(hdrMap["slope"], ",")
+	slopes, err := convert.StringToFloats(hdrMap["slope"], ",")
 	if err != nil {
 		return nil, err
 	} else if len(slopes) != hdr.NumSeries {

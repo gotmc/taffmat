@@ -1,5 +1,5 @@
 module github.com/gotmc/taffmat
 
-go 1.13
+go 1.21
 
-require github.com/gotmc/parse v0.1.0
+require github.com/gotmc/convert v0.2.0

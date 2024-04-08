@@ -1,4 +1,4 @@
-// Copyright (c) 2020 The taffmat developers. All rights reserved.
+// Copyright (c) 2020–2024 The taffmat developers. All rights reserved.
 // Project site: https://github.com/gotmc/taffmat
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
@@ -252,7 +252,11 @@ func TestParseHeader(t *testing.T) {
 			t.Errorf("StopTime = %s, expected %s", hdr.StopTime, tc.hdr.StopTime)
 		}
 		if len(hdr.Channels) != hdr.NumSeries {
-			t.Errorf("Channel length (%d) doesn't match number of series (%d)", len(hdr.Channels), hdr.NumSeries)
+			t.Errorf(
+				"Channel length (%d) doesn't match number of series (%d)",
+				len(hdr.Channels),
+				hdr.NumSeries,
+			)
 		}
 		if !almostEqual(hdr.Channels[0].Slope, tc.hdr.Channels[0].Slope) {
 			t.Errorf("slope = %f, expected %f", hdr.Channels[0].Slope, tc.hdr.Channels[0].Slope)
@@ -261,10 +265,18 @@ func TestParseHeader(t *testing.T) {
 			t.Errorf("slope = %f, expected %f", hdr.Channels[1].Slope, tc.hdr.Channels[1].Slope)
 		}
 		if !almostEqual(hdr.Channels[0].YOffset, tc.hdr.Channels[0].YOffset) {
-			t.Errorf("ch 1 y-offset = %f, expected %f", hdr.Channels[0].YOffset, tc.hdr.Channels[0].YOffset)
+			t.Errorf(
+				"ch 1 y-offset = %f, expected %f",
+				hdr.Channels[0].YOffset,
+				tc.hdr.Channels[0].YOffset,
+			)
 		}
 		if !almostEqual(hdr.Channels[1].YOffset, tc.hdr.Channels[1].YOffset) {
-			t.Errorf("ch 2 y-offset = %f, expected %f", hdr.Channels[1].YOffset, tc.hdr.Channels[1].YOffset)
+			t.Errorf(
+				"ch 2 y-offset = %f, expected %f",
+				hdr.Channels[1].YOffset,
+				tc.hdr.Channels[1].YOffset,
+			)
 		}
 	}
 }
